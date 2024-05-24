@@ -1,1 +1,1 @@
-# groovy-grooid for Android
+# groovy for Android
