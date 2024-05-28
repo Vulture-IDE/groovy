@@ -1,4 +1,3 @@
 package groovyjarjaropenbeans;
 
-public @interface Transient {
-}
+public @interface Transient {}
