@@ -48,32 +48,34 @@ public class SyntaxErrorMessage extends Message {
         errorName = matcher.group(1);
       }
 
-      start = errorLineString.indexOf(errorName) + 1;
-      end = start + errorName.length();
+      if (errorName != null) {
+        start = errorLineString.indexOf(errorName) + 1;
+        end = start + errorName.length();
 
-      if (cause.getStartColumn() != start || cause.getEndColumn() != end) {
-        cause.setStartColumn(start);
-        cause.setEndColumn(end);
-        cause.setEndLine(end);
-      }
-    } else {
-      errorName = errorLineString.trim();
-      if (errorName.isEmpty()) {
-        int line = getValidErrorLine(cause.getLine());
-        errorLineString = this.source.getSource().getLine(line, new Janitor());
-        errorName = errorLineString.trim();
-        start = errorLineString.indexOf(errorName) + 1;
-        end = start + errorName.length();
-        cause.setLine(line);
-        cause.setStartColumn(end - 1);
-        cause.setEndColumn(end);
+        if (cause.getStartColumn() != start || cause.getEndColumn() != end) {
+          cause.setStartColumn(start);
+          cause.setEndColumn(end);
+          cause.setEndLine(end);
+        }
       } else {
-        errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
         errorName = errorLineString.trim();
-        start = errorLineString.indexOf(errorName) + 1;
-        end = start + errorName.length();
-        cause.setStartColumn(end - 1);
-        cause.setEndColumn(end);
+        if (errorName.isEmpty()) {
+          int line = getValidErrorLine(cause.getLine());
+          errorLineString = this.source.getSource().getLine(line, new Janitor());
+          errorName = errorLineString.trim();
+          start = errorLineString.indexOf(errorName) + 1;
+          end = start + errorName.length();
+          cause.setLine(line);
+          cause.setStartColumn(end - 1);
+          cause.setEndColumn(end);
+        } else {
+          errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
+          errorName = errorLineString.trim();
+          start = errorLineString.indexOf(errorName) + 1;
+          end = start + errorName.length();
+          cause.setStartColumn(end - 1);
+          cause.setEndColumn(end);
+        }
       }
     }
 
