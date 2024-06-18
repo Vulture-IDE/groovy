@@ -15,6 +15,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+tasks.assemble.dependsOn tasks.shadowJar
+tasks.build.dependsOn tasks.shadowJar
+
 spotless {
     java {
         target "**/*.java"		  
@@ -34,8 +37,7 @@ shadowJar {
 }
 
 dependencies {
-    implementation files('libs/java-desktop.jar')
-    implementation 'org.codehaus.groovy:groovy:3.0.7:grooid'
+    implementation 'org.apache.groovy:groovy:5.0.0-alpha-8:grooid'
 }
 
 publishing {
@@ -43,7 +45,7 @@ publishing {
         shadow(MavenPublication) { publication ->            
             groupId = 'org.vulture.ide'
             artifactId = 'groovy'
-            version = '3.0.7-grooid' 
+            version = '5.0.0-alpha-8-grooid' 
          
             from project.shadow.component(publication) 
         }
