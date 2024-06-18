@@ -34,10 +34,15 @@ java {
 
 shadowJar {        
     archiveFileName.set("${project.name}.jar")
+    
+    dependencies {
+        exclude(dependency('org.ow2.asm:asm:9.7'))
+    }
 }
 
 dependencies {
     implementation 'org.apache.groovy:groovy:5.0.0-alpha-8:grooid'
+    implementation 'org.ow2.asm:asm:9.7'
 }
 
 publishing {
