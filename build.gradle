@@ -8,6 +8,7 @@ plugins {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 java {
@@ -37,12 +38,14 @@ shadowJar {
     
     dependencies {
         exclude(dependency('org.ow2.asm:asm:9.7'))
+        exclude(dependency('com.github.Vulture-IDE:java-desktop:jdk24-ea2'))
     }
 }
 
 dependencies {
     implementation 'org.apache.groovy:groovy:5.0.0-alpha-8:grooid'
     implementation 'org.ow2.asm:asm:9.7'
+    implementation 'com.github.Vulture-IDE:java-desktop:jdk24-ea2'	
 }
 
 publishing {
