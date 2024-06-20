@@ -74,7 +74,20 @@ public class SyntaxErrorMessage extends Message {
               cause.setEndLine(end);
             }
           } else {
-            if (errorName.contains("}")) {
+            if (errorName.equals("\\n")) {
+              errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
+              if (errorLineString.trim().startsWith("import")) {
+                errorName = errorLineString.replace("import", "").trim();
+
+                int start = errorLineString.indexOf(errorName) + 1;
+                int end = start + errorName.length();
+
+                cause.setStartColumn(start);
+                cause.setEndColumn(end);
+                cause.setEndLine(end);
+              }
+
+            } else if (errorName.contains("}")) {
               cause.setLine(cause.getLine() - 1);
               errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
               if (errorLineString != null && !errorLineString.trim().isEmpty()) {
