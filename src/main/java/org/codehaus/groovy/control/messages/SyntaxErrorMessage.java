@@ -43,40 +43,31 @@ public class SyntaxErrorMessage extends Message {
     if (isEOF) {
       if (errorLineString != null && errorLineString.trim().isEmpty()) {
         int line = getValidErrorLine(cause.getLine());
-
         errorLineString = this.source.getSource().getLine(line, new Janitor());
         errorName = errorLineString.trim();
-
         int start = errorLineString.indexOf(errorName) + 1;
         int end = start + errorName.length();
-
         cause.setLine(line);
         cause.setStartColumn(start);
         cause.setEndColumn(end);
       } else {
         errorName = errorLineString.trim();
-
         int start = errorLineString.indexOf(errorName) + 1;
         int end = start + errorName.length();
-
         cause.setStartColumn(start);
         cause.setEndColumn(end);
       }
     } else {
-
       Matcher matcher = Pattern.compile("'(.*?)'|\\[(.*?)\\]").matcher(message);
       if (matcher.find()) {
         errorName = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
       }
-
       if (errorName != null && !errorName.isEmpty()) {
+        errorName = errorName.trim();
         if (errorLineString != null && !errorLineString.trim().isEmpty()) {
-          errorName = errorName.trim();
-
           if (errorName.equals(errorLineString.trim())) {
             int start = errorLineString.indexOf(errorName) + 1;
             int end = start + errorName.length();
-
             if (cause.getStartColumn() != start || cause.getEndColumn() != end) {
               cause.setStartColumn(start);
               cause.setEndColumn(end);
@@ -86,27 +77,32 @@ public class SyntaxErrorMessage extends Message {
             if (errorName.contains("}")) {
               cause.setLine(cause.getLine() - 1);
               errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
-
               if (errorLineString != null && !errorLineString.trim().isEmpty()) {
                 errorName = errorLineString.trim();
-
                 int start = errorLineString.indexOf(errorName) + 1;
                 int end = start + errorName.length();
-
+                cause.setStartColumn(start);
+                cause.setEndColumn(end);
+                cause.setEndLine(end);
+              } else {
+                errorName = errorName.replace("\\n", "").replace("}", "");
+                errorName = errorName.trim();
+                int line = getValidErrorLine(cause.getLine(), errorName);
+                errorLineString = this.source.getSource().getLine(line, new Janitor());
+                int start = errorLineString.indexOf(errorName) + 1;
+                int end = start + errorName.length();
+                cause.setLine(line);
                 cause.setStartColumn(start);
                 cause.setEndColumn(end);
                 cause.setEndLine(end);
               }
             } else {
-
               errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
               if (errorName != null && !errorName.isEmpty()) {
                 if (errorLineString != null && !errorLineString.trim().isEmpty()) {
                   errorName = errorName.trim();
-
                   int start = errorLineString.indexOf(errorName) + 1;
                   int end = start + errorName.length();
-
                   cause.setStartColumn(start);
                   cause.setEndColumn(end);
                   cause.setEndLine(end);
@@ -114,6 +110,17 @@ public class SyntaxErrorMessage extends Message {
               }
             }
           }
+        } else {
+          errorName = errorName.replace("\\n", "");
+          errorName = errorName.trim();
+          int line = getValidErrorLine(cause.getLine(), errorName);
+          errorLineString = this.source.getSource().getLine(line, new Janitor());
+          int start = errorLineString.indexOf(errorName) + 1;
+          int end = start + errorName.length();
+          cause.setLine(line);
+          cause.setStartColumn(start);
+          cause.setEndColumn(end);
+          cause.setEndLine(end);
         }
       }
     }
@@ -133,6 +140,20 @@ public class SyntaxErrorMessage extends Message {
       String string = this.source.getSource().getLine(line, new Janitor());
       if (string != null && !string.trim().isEmpty()) {
         return line;
+      }
+      line--;
+    }
+    return line;
+  }
+
+  /** Returns the valid error line for invalid SyntaxException. */
+  private int getValidErrorLine(int line, String search) {
+    while (line >= 0) {
+      String string = this.source.getSource().getLine(line, new Janitor());
+      if (string != null && !string.isEmpty()) {
+        if (string.trim().equals(search)) {
+          return line;
+        }
       }
       line--;
     }
