@@ -38,7 +38,7 @@ shadowJar {
     
     dependencies {
         exclude(dependency('org.ow2.asm:asm:9.7'))
-        exclude(dependency('com.github.Vulture-IDE:java-desktop:jdk24-ea2'))
+        exclude(dependency('com.github.Vulture-IDE:java-desktop:jdk21.0.2'))
     }
 }
 

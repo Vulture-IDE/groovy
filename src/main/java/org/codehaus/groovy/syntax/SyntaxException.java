@@ -27,14 +27,14 @@ public class SyntaxException extends GroovyException {
   private static final long serialVersionUID = 7447641806794047013L;
 
   /** Line upon which the error occurred. */
-  private final int startLine;
+  private int startLine;
 
-  private final int endLine;
+  private int endLine;
 
   /** Column upon which the error occurred. */
-  private final int startColumn;
+  private int startColumn;
 
-  private final int endColumn;
+  private int endColumn;
 
   private String sourceLocator;
 
