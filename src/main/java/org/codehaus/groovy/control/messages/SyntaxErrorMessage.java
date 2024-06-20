@@ -33,6 +33,7 @@ public class SyntaxErrorMessage extends Message {
   public SyntaxErrorMessage(SyntaxException cause, SourceUnit source) {
     this.source = source;
 
+    /** Returns the valid error line for invalid SyntaxException. */
     String message = cause.getMessage();
     boolean isEOF = message.contains("EOF");
 
