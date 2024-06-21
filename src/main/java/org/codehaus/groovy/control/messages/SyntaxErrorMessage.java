@@ -35,29 +35,34 @@ public class SyntaxErrorMessage extends Message {
 
     /** Returns the valid error line for invalid SyntaxException. */
     String message = cause.getMessage();
-    boolean isEOF = message.contains("EOF");
+    boolean isEOF = message != null && message.contains("EOF");
 
-    String errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
+    String errorLineString =
+        this.source != null && this.source.getSource() != null
+            ? this.source.getSource().getLine(cause.getLine(), new Janitor())
+            : null;
     String errorName = null;
 
     if (isEOF) {
       if (errorLineString != null && errorLineString.trim().isEmpty()) {
         int line = getValidErrorLine(cause.getLine());
         errorLineString = this.source.getSource().getLine(line, new Janitor());
-        errorName = errorLineString.trim();
-        int start = errorLineString.indexOf(errorName) + 1;
-        int end = start + errorName.length();
-        cause.setLine(line);
-        cause.setStartColumn(start);
-        cause.setEndColumn(end);
-      } else {
+        if (errorLineString != null) {
+          errorName = errorLineString.trim();
+          int start = errorLineString.indexOf(errorName) + 1;
+          int end = start + errorName.length();
+          cause.setLine(line);
+          cause.setStartColumn(start);
+          cause.setEndColumn(end);
+        }
+      } else if (errorLineString != null) {
         errorName = errorLineString.trim();
         int start = errorLineString.indexOf(errorName) + 1;
         int end = start + errorName.length();
         cause.setStartColumn(start);
         cause.setEndColumn(end);
       }
-    } else {
+    } else if (message != null) {
       Matcher matcher = Pattern.compile("'(.*?)'|\\[(.*?)\\]").matcher(message);
       if (matcher.find()) {
         errorName = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
@@ -73,35 +78,31 @@ public class SyntaxErrorMessage extends Message {
               cause.setEndColumn(end);
               cause.setEndLine(end);
             }
-          } else {
-            if (errorName.equals("\\n")) {
-              errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
-              if (errorLineString.trim().startsWith("import")) {
-                errorName = errorLineString.replace("import", "").trim();
-
-                int start = errorLineString.indexOf(errorName) + 1;
-                int end = start + errorName.length();
-
-                cause.setStartColumn(start);
-                cause.setEndColumn(end);
-                cause.setEndLine(end);
-              }
-
-            } else if (errorName.contains("}")) {
-              cause.setLine(cause.getLine() - 1);
-              errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
-              if (errorLineString != null && !errorLineString.trim().isEmpty()) {
-                errorName = errorLineString.trim();
-                int start = errorLineString.indexOf(errorName) + 1;
-                int end = start + errorName.length();
-                cause.setStartColumn(start);
-                cause.setEndColumn(end);
-                cause.setEndLine(end);
-              } else {
-                errorName = errorName.replace("\\n", "").replace("}", "");
-                errorName = errorName.trim();
-                int line = getValidErrorLine(cause.getLine(), errorName);
-                errorLineString = this.source.getSource().getLine(line, new Janitor());
+          } else if (errorName.equals("\\n")) {
+            errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
+            if (errorLineString != null && errorLineString.trim().startsWith("import")) {
+              errorName = errorLineString.replace("import", "").trim();
+              int start = errorLineString.indexOf(errorName) + 1;
+              int end = start + errorName.length();
+              cause.setStartColumn(start);
+              cause.setEndColumn(end);
+              cause.setEndLine(end);
+            }
+          } else if (errorName.contains("}")) {
+            cause.setLine(cause.getLine() - 1);
+            errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
+            if (errorLineString != null && !errorLineString.trim().isEmpty()) {
+              errorName = errorLineString.trim();
+              int start = errorLineString.indexOf(errorName) + 1;
+              int end = start + errorName.length();
+              cause.setStartColumn(start);
+              cause.setEndColumn(end);
+              cause.setEndLine(end);
+            } else {
+              errorName = errorName.replace("\\n", "").replace("}", "").trim();
+              int line = getValidErrorLine(cause.getLine(), errorName);
+              errorLineString = this.source.getSource().getLine(line, new Janitor());
+              if (errorLineString != null) {
                 int start = errorLineString.indexOf(errorName) + 1;
                 int end = start + errorName.length();
                 cause.setLine(line);
@@ -109,37 +110,39 @@ public class SyntaxErrorMessage extends Message {
                 cause.setEndColumn(end);
                 cause.setEndLine(end);
               }
-            } else {
-              errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
-              if (errorName != null && !errorName.isEmpty()) {
-                if (errorLineString != null && !errorLineString.trim().isEmpty()) {
-                  errorName = errorName.trim();
-                  int start = errorLineString.indexOf(errorName) + 1;
-                  int end = start + errorName.length();
-                  cause.setStartColumn(start);
-                  cause.setEndColumn(end);
-                  cause.setEndLine(end);
-                }
-              }
+            }
+          } else {
+            errorLineString = this.source.getSource().getLine(cause.getLine(), new Janitor());
+            if (errorName != null
+                && !errorName.isEmpty()
+                && errorLineString != null
+                && !errorLineString.trim().isEmpty()) {
+              errorName = errorName.trim();
+              int start = errorLineString.indexOf(errorName) + 1;
+              int end = start + errorName.length();
+              cause.setStartColumn(start);
+              cause.setEndColumn(end);
+              cause.setEndLine(end);
             }
           }
         } else {
-          errorName = errorName.replace("\\n", "");
-          errorName = errorName.trim();
+          errorName = errorName.replace("\\n", "").trim();
           int line = getValidErrorLine(cause.getLine(), errorName);
           errorLineString = this.source.getSource().getLine(line, new Janitor());
-          int start = errorLineString.indexOf(errorName) + 1;
-          int end = start + errorName.length();
-          cause.setLine(line);
-          cause.setStartColumn(start);
-          cause.setEndColumn(end);
-          cause.setEndLine(end);
+          if (errorLineString != null) {
+            int start = errorLineString.indexOf(errorName) + 1;
+            int end = start + errorName.length();
+            cause.setLine(line);
+            cause.setStartColumn(start);
+            cause.setEndColumn(end);
+            cause.setEndLine(end);
+          }
         }
       }
     }
 
     this.cause = cause;
-    cause.setSourceLocator(source.getName());
+    cause.setSourceLocator(source != null ? source.getName() : null);
   }
 
   /** Returns the underlying SyntaxException. */
