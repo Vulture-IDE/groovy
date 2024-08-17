@@ -121,9 +121,10 @@ public class CompilerConfiguration {
   /** This (<code>"22"</code>) is the value for targetBytecode to compile for a JDK 22. */
   public static final String JDK22 = "22";
 
-  /** This (<code>"22"</code>) is the value for targetBytecode to compile for a JDK 23. */
+  /** This (<code>"23"</code>) is the value for targetBytecode to compile for a JDK 23. */
   public static final String JDK23 = "23";
 
+  /** JDK version to bytecode version mapping. */
   /** JDK version to bytecode version mapping. */
   public static final Map<String, Integer> JDK_TO_BYTECODE_VERSION_MAP =
       Maps.of(
@@ -167,7 +168,7 @@ public class CompilerConfiguration {
       JDK_TO_BYTECODE_VERSION_MAP.keySet().toArray(new String[JDK_TO_BYTECODE_VERSION_MAP.size()]);
 
   /** The ASM API version used when loading/parsing classes and generating proxy adapter classes. */
-  public static final int ASM_API_VERSION = Opcodes.ASM8;
+  public static final int ASM_API_VERSION = Opcodes.ASM9;
 
   /** The default source encoding. */
   public static final String DEFAULT_SOURCE_ENCODING = "UTF-8";
