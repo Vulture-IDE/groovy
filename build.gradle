@@ -35,7 +35,7 @@ java {
 
 shadowJar {        
     archiveClassifier.set('grooid')
-    archiveFileName.set("${project.name}-${archiveClassifier.get()}.jar")
+    archiveFileName.set("${project.name}.jar")
 
     dependencies {
         exclude(dependency('org.ow2.asm:asm:9.7'))
@@ -53,7 +53,7 @@ publishing {
     publications {
         shadow(MavenPublication) { publication ->            
             groupId = 'org.vulture.ide'
-            artifactId = 'groovy'
+            artifactId = 'groovy:${archiveClassifier.get()}'
             version = '5.0.0-alpha-9:grooid' 
          
             from project.shadow.component(publication) 
