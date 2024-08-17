@@ -52,7 +52,7 @@ publishing {
     publications {
         shadow(MavenPublication) { publication ->            
             groupId = 'org.vulture.ide'
-            artifactId = 'groovy'
+            artifactId = 'groovy:grooid'
             version = '5.0.0-alpha-9:grooid' 
          
             from project.shadow.component(publication) 
