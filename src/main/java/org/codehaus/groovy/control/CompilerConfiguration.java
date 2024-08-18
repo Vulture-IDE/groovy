@@ -168,7 +168,7 @@ public class CompilerConfiguration {
       JDK_TO_BYTECODE_VERSION_MAP.keySet().toArray(new String[JDK_TO_BYTECODE_VERSION_MAP.size()]);
 
   /** The ASM API version used when loading/parsing classes and generating proxy adapter classes. */
-  public static final int ASM_API_VERSION = Opcodes.ASM9;
+  public static final int ASM_API_VERSION = Opcodes.ASM8;
 
   /** The default source encoding. */
   public static final String DEFAULT_SOURCE_ENCODING = "UTF-8";
