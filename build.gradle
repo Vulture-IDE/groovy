@@ -43,7 +43,7 @@ shadowJar {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:5.0.0-alpha-9'
+    implementation 'org.apache.groovy:groovy:5.0.0-alpha-9:grooid'
     implementation 'org.ow2.asm:asm:9.7'
     implementation 'com.github.Vulture-IDE:java-desktop:jdk21.0.2'	
 }
